@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>捐赠页面</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <style>
+        .rcorners2 {
+            border-radius: 13px;
+            border: 1px solid #66afe9;
+            width: 130px;
+        }
+        .price{
+            color:#b92c28;
+            font-size:x-large;
+            padding-right: 10px;
+        }
+        .x{
+            color: #b92c28;
+            font-size: 16px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="container">
+
+    <div class="page-header">
+        <h1>捐赠信息</h1>
+        <p class="lead">为什么要捐赠:<span th:text="${productPage.getProduct().getReasonForPayment()}"></span></p>
+    </div>
+    <form class="form-horizontal" role="form" method="post" action="/order">
+    <div class="panel panel-default text-center" >
+        <div class="panel-heading text-left">确认订单</div>
+        <h2>请填写捐赠信息</h2>
+        <p>为什么要捐赠:<span  th:text="${productPage.getProduct().getReasonForPayment()}"></span></p>
+        <p style="color: #66afe9" th:text="${productPage.getProduct().getProductDescribe()}"></p>
+        <div class="panel-body center-block">
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">昵称 <strong class="x">*</strong></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入您的昵称" name="petName">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">捐赠金额 <strong class="x">*</strong></label>
+                    <div class="col-sm-4">
+                        <select class="form-control" name="price">
+                            <option th:each="price:${productPage.getPriceList()}" th:id="${price.getId()}"  th:value="${price.getPrice()}" th:text="${'￥'+price.getPrice()+' '+price.getDescription()}" >/option>
+                        </select>
+                    </div>
+                </div>
+               <input type="hidden" name="priceId" class="priceId">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">您的邮箱 <strong class="x">*</strong></label>
+                    <div class="col-sm-4">
+                        <input class="form-control"  type="text"  placeholder="支付结果及源码将发送至您邮箱(推荐QQ邮箱)"  name="email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">留言</label>
+                    <div class="col-sm-4">
+                        <input class="form-control"  type="text"  placeholder="请输入您的留言内容" name="message">
+                    </div>
+                </div>
+            <p style="color: #1a1a1a"  th:text="${productPage.getProduct().getConfirmDescribe()}"></p>
+            <h4 class="text-left">支付方式</h4>
+            <hr>
+            <p class="text-left"><img src="/images/weixinpay@2x.png" class="rcorners2"></p>
+        </div>
+        <div class="panel-footer text-right">
+            <p>应付金额： <strong class="price" id="price" >¥19.90 </strong> <button type="submit" class="btn btn-success">立即支付</button></p>
+
+        </div>
+        <input type="hidden" name="proId" th:value="${proId}">
+    </div>
+    </form>
+    <br>
+    <div class="row">
+    </div>
+</div> <!-- /container -->
+<script>
+    var price=$("select[name='price'] option:selected").val();
+    $(".price").text(price);
+    $(function(){
+        $(".form-control").change(function () {
+            var price=$("select[name='price'] option:selected").val();
+            $(".price").text(price);
+            $(".priceId").val($("select[name='price'] option:selected").attr("id"));
+        })
+    });
+</script>
+</body>
+</html>

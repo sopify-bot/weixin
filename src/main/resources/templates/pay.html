@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>捐赠页面</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        .rcorners2 {
+            border-radius: 13px;
+            width: 180px;
+        }
+        .price{
+            color:#b92c28;
+            font-size:xx-large;
+            padding-right: 10px;
+        }
+        .priceb{
+            color:#b92c28;
+            font-size:x-large;
+            padding-right: 10px;
+        }
+        .x{
+            color: #b92c28;
+            font-size: 16px;
+        }
+        .img-box {
+            background: linear-gradient(#ae0000, #ae0000) left top,
+            linear-gradient(#ae0000, #ae0000) left top,
+            linear-gradient(#ae0000, #ae0000) right top,
+            linear-gradient(#ae0000, #ae0000) right top,
+            linear-gradient(#ae0000, #ae0000) right bottom,
+            linear-gradient(#ae0000, #ae0000) right bottom,
+            linear-gradient(#ae0000, #ae0000) left bottom,
+            linear-gradient(#ae0000, #ae0000) left bottom;
+            background-repeat: no-repeat;
+            background-size: 2px 20px, 20px 2px;
+            /*height: 116px;*/
+            /*width: 116px;*/
+        }
+        .code {
+            height: 110px;
+            width: 110px;
+            margin-top: 2px;
+            margin-left:2px;
+            border: 1px solid #ae0000;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="page-header">
+        <h1>捐赠信息</h1>
+        <p class="lead">为什么要捐赠:<span th:text="${payPage.getProduct().getReasonForPayment()}"></span></p>
+    </div>
+    <form method="post" action="/pay">
+    <div class="panel panel-default text-center" >
+        <div class="panel-heading text-left">确认订单</div>
+        <p ><img src="images/weixinpay@2x.png" class="rcorners2"></p>
+        <p>扫一扫付款</p>
+        <p class="price" th:text="${'¥'+payPage.getOrder().getPrice()}">¥19.90</p>
+        <p class="img-box">
+            <img class="code"   th:src="${price.getOrcodeName()}" >
+        </p>
+        <p><img alt="扫一扫标识" class="explain" id="explain" src="/images/wechat-explain.png" width="168px" ></p>
+        <p class="timeBar" data="90">请于 01 分 25 秒 内支付</p>
+        <div class="panel-footer text-right">
+            <p>应付金额： <strong class="priceb" th:text="${'¥'+payPage.getOrder().getPrice()}">¥19.90 </strong> <button type="submit" id="waitPay" class="btn btn-success label-default" disabled>等待支付...</button></p>
+        </div>
+    </div>
+        <input type="hidden" th:value="${price.getId()}" name="priceId">
+        <input type="hidden" th:value="${proId}" name="proId">
+    </form>
+    <br>
+    <div class="row">
+    </div>
+    <input type="hidden" th:value="${'/'+payPage.getOrder().getId()}" class="mailPath">
+</div> <!-- /container -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/countdown.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $(".timeBar").each(function () {
+            $(this).countdownsync({
+                dayTag: "",
+                hourTag: "<span>请于 </span>",
+                minTag: "<label class='tt mm dib vam'>00</label><span> 分 </span>",
+                secTag: "<label class='tt ss dib vam'>00</label><span> 秒 内支付</span>",
+                dayClass: ".dd",
+                hourClass: ".hh",
+                minClass: ".mm",
+                secClass: ".ss",
+                isDefault: false,
+                showTemp:1
+
+            }, function () {
+                    $('#waitPay').text('二维码已过期');
+            },58,
+                function () {
+                    $("#waitPay").css("background-color","#66afe9");
+                    $('#waitPay').removeAttr("disabled");
+                    $('#waitPay').text('确认已支付');
+                },78,
+                function () {
+                    $.ajax({
+                        url: '/mail/'+$('.mailPath').val(),
+                        data: {name: 'jenny'},
+                        type: "POST",
+                        dataType: "json",
+                        success: function(data) {
+
+                        }
+                    });
+                }
+            )
+            ;
+        });
+    });
+
+</script>
+
+</body>
+</html>
